@@ -10,6 +10,7 @@ import SwiftUI
 struct GridView: View {
     @ObservedObject var viewModel: BlindCheckViewModel
     @State private var markerToScan: MarkerData?
+    var onNavigateToContract: (() -> Void)? = nil
     
     var body: some View {
         GeometryReader { geometry in
@@ -73,7 +74,8 @@ struct GridView: View {
                         validationResult: viewModel.validationResults[centerMarker.id],
                         onValidate: { isValid, notes in
                             viewModel.manualValidation(for: centerMarker, isValid: isValid, notes: notes)
-                        }
+                        },
+                        onNavigateToContract: onNavigateToContract
                     )
                 }
                     } else {
@@ -197,9 +199,14 @@ struct MarkerDetailView: View {
     let marker: MarkerData
     let validationResult: ValidationResult?
     let onValidate: (Bool, String?) -> Void
+    let onNavigateToContract: (() -> Void)?
     
     @State private var showingValidationSheet = false
     @State private var validationNotes = ""
+    
+    // Verification states
+    @State private var isVerifying = false
+    @State private var showingConfirmation = false
     
     // Checkbox states
     @State private var memorialPlacement: String = ""
@@ -296,19 +303,37 @@ struct MarkerDetailView: View {
             // Bottom action buttons
             HStack(spacing: 12) {
                 Button(action: {
-                    onValidate(true, nil)
+                    // Start verification process
+                    isVerifying = true
+                    
+                    // Simulate processing delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        isVerifying = false
+                        onValidate(true, nil)
+                        showingConfirmation = true
+                    }
                 }) {
-                    Text("Verify")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.green)
-                        .cornerRadius(10)
+                    HStack {
+                        if isVerifying {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                            Text("Verifying...")
+                        } else {
+                            Text("Verify")
+                        }
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(isVerifying ? Color.gray : Color.green)
+                    .cornerRadius(10)
                 }
+                .disabled(isVerifying)
                 
                 Button(action: {
-                    showingValidationSheet = true
+                    onNavigateToContract?()
                 }) {
                     Text("Cancel")
                         .font(.headline)
@@ -330,6 +355,12 @@ struct MarkerDetailView: View {
                 onValidate(false, validationNotes)
                 showingValidationSheet = false
                 validationNotes = ""
+            })
+        }
+        .sheet(isPresented: $showingConfirmation) {
+            VerificationConfirmationSheet(onClose: {
+                showingConfirmation = false
+                onNavigateToContract?()
             })
         }
     }
@@ -434,6 +465,55 @@ struct CheckboxGroup: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+        }
+    }
+}
+
+// MARK: - VerificationConfirmationSheet Component
+struct VerificationConfirmationSheet: View {
+    let onClose: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 30) {
+                Spacer()
+                
+                // Success icon
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 80))
+                    .foregroundColor(.green)
+                
+                // Confirmation message
+                VStack(spacing: 16) {
+                    Text("Verification Complete!")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Text("Your verification report has been successfully sent.")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                
+                Spacer()
+                
+                // Close button
+                Button(action: onClose) {
+                    Text("Close")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                }
+            }
+            .padding()
+            .navigationTitle("Success")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

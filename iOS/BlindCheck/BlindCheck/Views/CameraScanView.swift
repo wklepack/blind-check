@@ -118,8 +118,9 @@ struct CameraScanView: View {
                 // Action buttons
                 VStack(spacing: 12) {
                     if !scannedText.isEmpty {
-                        HStack(spacing: 12) {
-                            if isTextMatched || matchPercentage >= 85 {
+                        if isTextMatched || matchPercentage >= 85 {
+                            // Show both buttons when text matches
+                            HStack(spacing: 12) {
                                 Button("✓ Mark Valid") {
                                     viewModel.manualValidation(
                                         for: marker,
@@ -135,8 +136,19 @@ struct CameraScanView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .font(.headline)
+                                
+                                Button("✗ Mark Invalid") {
+                                    showingManualValidation = true
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                                .font(.headline)
                             }
-                            
+                        } else {
+                            // Show only Mark Invalid button when text doesn't match
                             Button("✗ Mark Invalid") {
                                 showingManualValidation = true
                             }

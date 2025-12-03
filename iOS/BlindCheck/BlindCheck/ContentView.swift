@@ -31,7 +31,11 @@ struct ContentView: View {
             } else {
                 // Main app content - directly show GridView
                 NavigationView {
-                    GridView(viewModel: viewModel)
+                    GridView(viewModel: viewModel) {
+                        // Navigate back to ContractIDView
+                        isContractVerified = false
+                        enteredContractID = ""
+                    }
                         .navigationTitle("Contract: \(enteredContractID)")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
