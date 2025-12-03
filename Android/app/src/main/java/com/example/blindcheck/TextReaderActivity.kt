@@ -16,6 +16,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -33,6 +35,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlin.math.max
+import kotlin.math.min
 
 class TextReaderActivity : ComponentActivity() {
 
@@ -76,24 +80,12 @@ class TextReaderActivity : ComponentActivity() {
                         }
                     )
                 } else {
+                    val isVerified = isTextSimilar(cellName, recognizedText)
                     ConfirmationScreen(
                         cellName = cellName,
                         scannedText = recognizedText,
+                        isVerified = isVerified,
                         onSave = {
-                            val cleanRecognizedText = recognizedText.replace("\n", " ").replace(Regex("\\s+"), " ").trim()
-                            val cellNameWords = cellName.lowercase().split(" ").filter { it.isNotBlank() }.toSet()
-                            val recognizedWords = cleanRecognizedText.lowercase().split(" ").filter { it.isNotBlank() }.toSet()
-
-                            val matchingWords = cellNameWords.intersect(recognizedWords)
-
-                            val matchThreshold = 0.5 // 50% of words must match
-
-                            val isVerified = if (cellNameWords.isNotEmpty()) {
-                                (matchingWords.size.toFloat() / cellNameWords.size.toFloat()) >= matchThreshold
-                            } else {
-                                false
-                            }
-
                             val resultIntent = Intent().apply {
                                 putExtra("isVerified", isVerified)
                             }
@@ -111,6 +103,54 @@ class TextReaderActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun isTextSimilar(expected: String, actual: String): Boolean {
+        val cleanExpected = expected.replace(Regex("[^A-Za-z0-9\\s]"), "").replace(Regex("\\s+"), " ").trim().lowercase()
+        val cleanActual = actual.replace(Regex("[^A-Za-z0-9\\s]"), "").replace(Regex("\\s+"), " ").trim().lowercase()
+
+        val distance = levenshtein(cleanExpected, cleanActual)
+        val similarity = 1.0 - (distance.toDouble() / max(cleanExpected.length, cleanActual.length))
+
+        return similarity >= 0.8 // 80% similarity threshold
+    }
+
+    private fun levenshtein(lhs: CharSequence, rhs: CharSequence): Int {
+        if (lhs == rhs) {
+            return 0
+        }
+        if (lhs.isEmpty()) {
+            return rhs.length
+        }
+        if (rhs.isEmpty()) {
+            return lhs.length
+        }
+
+        val lhsLength = lhs.length + 1
+        val rhsLength = rhs.length + 1
+
+        var cost = Array(lhsLength) { it }
+        var newCost = Array(lhsLength) { 0 }
+
+        for (i in 1 until rhsLength) {
+            newCost[0] = i
+
+            for (j in 1 until lhsLength) {
+                val match = if (lhs[j - 1] == rhs[i - 1]) 0 else 1
+
+                val costReplace = cost[j - 1] + match
+                val costInsert = cost[j] + 1
+                val costDelete = newCost[j - 1] + 1
+
+                newCost[j] = min(min(costInsert, costDelete), costReplace)
+            }
+
+            val swap = cost
+            cost = newCost
+            newCost = swap
+        }
+
+        return cost[lhsLength - 1]
     }
 
     @OptIn(ExperimentalGetImage::class)
@@ -155,6 +195,7 @@ fun PermissionRequestScreen(onRequestPermission: () -> Unit) {
 fun ConfirmationScreen(
     cellName: String,
     scannedText: String,
+    isVerified: Boolean,
     onSave: () -> Unit,
     onScanAgain: () -> Unit
 ) {
@@ -166,6 +207,8 @@ fun ConfirmationScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -183,6 +226,18 @@ fun ConfirmationScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
+
+            val verificationStatus = if (isVerified) "Match" else "No Match"
+            val verificationColor = if (isVerified) Color.Green else Color.Red
+
+            Text(
+                text = "Verification: $verificationStatus",
+                color = verificationColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
