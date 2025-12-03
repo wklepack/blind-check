@@ -105,24 +105,17 @@ class DataManager {
 extension DataManager {
     /// Generate realistic cemetery marker data
     func generateSampleData(rows: Int = 5, columns: Int = 5) -> [UUID: MarkerData] {
-        let firstNames = [
-            "John", "Mary", "Robert", "Patricia", "Michael", "Jennifer", "William", "Linda",
-            "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah",
-            "Charles", "Karen", "Christopher", "Nancy", "Daniel", "Lisa", "Matthew", "Betty",
-            "Anthony", "Margaret", "Mark", "Sandra", "Donald", "Ashley", "Steven", "Kimberly",
-            "Paul", "Emily", "Andrew", "Donna", "Joshua", "Michelle", "Kenneth", "Carol",
-            "Kevin", "Amanda", "Brian", "Dorothy", "George", "Melissa", "Edward", "Deborah",
-            "Ronald", "Stephanie"
-        ]
-        
-        let lastNames = [
-            "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
-            "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
-            "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson",
-            "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker",
-            "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
-            "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell",
-            "Carter", "Roberts"
+        let names = [
+            "Michael Johnson",
+            "Emily Davis", 
+            "Christopher Miller",
+            "Jessica Anderson",
+            "Daniel Thompson",
+            "Ashley Martinez",
+            "James Wilson",
+            "Sarah Harris",
+            "Andrew Clark",
+            "Amanda Wright"
         ]
         
         var markers: [UUID: MarkerData] = [:]
@@ -130,9 +123,7 @@ extension DataManager {
         
         for row in 0..<rows {
             for col in 0..<columns {
-                let firstName = firstNames[nameIndex % firstNames.count]
-                let lastName = lastNames[(nameIndex / firstNames.count) % lastNames.count]
-                let fullName = "\(firstName) \(lastName)"
+                let fullName = names[nameIndex % names.count]
                 
                 let marker = MarkerData(
                     name: fullName,
