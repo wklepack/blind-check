@@ -146,15 +146,15 @@ public class FileStore() : IStore
         {
             var response = await _container.UpsertItemAsync(
                 item: form,
-                partitionKey: new PartitionKey("TODO")
+                partitionKey: new PartitionKey(form.ContractNumber)
             );
 
-            _logger?.LogInformation($"Successfully saved BlindCheckForm with caseId '{"TODO"}' to CosmosDB");
+            _logger?.LogInformation($"Successfully saved BlindCheckForm with caseId '{form.ContractNumber}' to CosmosDB");
             return response.Resource;
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, $"Error saving BlindCheckForm with caseId '{"TODO"}' to CosmosDB");
+            _logger?.LogError(ex, $"Error saving BlindCheckForm with caseId '{form.ContractNumber}' to CosmosDB");
             throw;
         }
     }
