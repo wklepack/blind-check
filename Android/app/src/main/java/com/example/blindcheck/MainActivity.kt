@@ -7,14 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed // Import itemsIndexed
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -47,55 +47,94 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 var gridItems by remember {
                     mutableStateOf(
-                        List(9) { index -> GridItem(id = index, name = "Item ${index + 1}") }
+                        List(9) { index -> GridItem(id = index, name = "") }
                     )
                 }
                 var currentEditingItemId by remember { mutableStateOf<Int?>(null) }
 
+                var activityResult by remember { mutableStateOf<ActivityResult?>(null) }
+
                 val textReaderLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult()
                 ) { result ->
-                    if (result.resultCode == Activity.RESULT_OK) {
+                    activityResult = result
+                }
+
+                LaunchedEffect(activityResult) {
+                    val result = activityResult
+                    if (result != null && result.resultCode == Activity.RESULT_OK) {
                         val recognizedText = result.data?.getStringExtra("recognizedText") ?: ""
                         val itemId = currentEditingItemId
                         if (itemId != null && recognizedText.isNotBlank()) {
                             gridItems = gridItems.map {
                                 if (it.id == itemId) {
-                                    it.copy(name = recognizedText) // Update the name
+                                    it.copy(name = recognizedText)
                                 } else {
                                     it
                                 }
                             }
                         }
+                        currentEditingItemId = null
+                        activityResult = null
                     }
-                    currentEditingItemId = null // Reset
                 }
 
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GridScreen(
-                        items = gridItems,
-                        onItemClick = { clickedItem ->
-                            currentEditingItemId = clickedItem.id
-                            val intent = Intent(context, TextReaderActivity::class.java)
-                            textReaderLauncher.launch(intent)
-                        },
-                        onItemCheckedChange = { clickedItem, isChecked ->
-                            gridItems = gridItems.map { item ->
-                                if (item.id == clickedItem.id) {
-                                    item.copy(isVerified = isChecked)
-                                } else {
-                                    item
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Name: User Name",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "Contract Number: 123456789",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        GridScreen(
+                            items = gridItems,
+                            onItemClick = { clickedItem ->
+                                currentEditingItemId = clickedItem.id
+                                val intent = Intent(context, TextReaderActivity::class.java)
+                                textReaderLauncher.launch(intent)
+                            },
+                            onItemCheckedChange = { clickedItem, isChecked ->
+                                gridItems = gridItems.map { item ->
+                                    if (item.id == clickedItem.id) {
+                                        item.copy(isVerified = isChecked)
+                                    } else {
+                                        item
+                                    }
                                 }
                             }
-                        },
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Button(
+                            onClick = { /* TODO: Handle button click */ },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text = "Verify Blind Check")
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+// GridScreen composable remains unchanged
 @Composable
 fun GridScreen(
     items: List<GridItem>,
@@ -105,18 +144,15 @@ fun GridScreen(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // --- KEY CHANGE 1: Use itemsIndexed to get the index of each item ---
         itemsIndexed(items) { index, item ->
             GridCell(
                 item = item,
-                index = index, // Pass the index to the GridCell
-                onNameClick = { onItemClick(item) },
+                index = index,
+                onClick = { onItemClick(item) },
                 onCheckedChange = { isChecked -> onItemCheckedChange(item, isChecked) }
             )
         }
@@ -126,55 +162,86 @@ fun GridScreen(
 @Composable
 fun GridCell(
     item: GridItem,
-    index: Int, // Receive the index
-    onNameClick: () -> Unit,
+    index: Int,
+    onClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    // --- KEY CHANGE 2: Calculate coordinates from the index ---
     val row = (index / 3) + 1
     val col = (index % 3) + 1
 
     Column(
         modifier = Modifier
-            .aspectRatio(1f) // Makes the cell a square
+            .aspectRatio(1f)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween // Pushes content to top and bottom
+            .clickable(onClick = onClick)
+            // --- KEY CHANGE: Adjust padding ---
+            // Reduce horizontal padding to give text more space
+            .padding(horizontal = 4.dp, vertical = 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // This inner column groups the text and coordinates at the top
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = item.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(bottom = 4.dp)
-                    .clickable(onClick = onNameClick)
-            )
-
-            // --- KEY CHANGE 3: Display the coordinates ---
-            Text(
-                text = "($row, $col)",
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
+        // This Box takes up the available space in the middle
+        Box(
+            modifier = Modifier
+                .weight(1f) // This makes the Box expand and pushes other elements to the edges
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center // Center the content inside the Box
+        ) {
+            // A new column to hold the name and coordinates
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                // 1. Scanned Text is now on top
+                Text(
+                    text = item.name.ifEmpty { "..." },
+                    fontSize = if (item.name.isEmpty()) 16.sp else 12.sp,
+                    fontWeight = if (item.name.isEmpty()) FontWeight.Normal else FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = if (item.name.isEmpty()) Color.LightGray else MaterialTheme.colorScheme.onSurface
+                )
+                // Add a small space only if there is a name
+                if (item.name.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+                // 2. Coordinates are now below the name
+                Text(
+                    text = "($row, $col)",
+                    fontSize = 10.sp,
+                    color = Color.Gray
+                )
+            }
         }
 
-        Checkbox(
-            checked = item.isVerified,
-            onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(top = 8.dp) // Add some space above checkbox
-        )
+        // Reduce space around the Checkbox
+        Box(
+            modifier = Modifier
+                .height(32.dp) // Constrain the height of the checkbox area
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Checkbox(
+                checked = item.isVerified,
+                onCheckedChange = onCheckedChange
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
 fun GridScreenPreview() {
     BlindCheckTheme {
-        val items = List(9) { index -> GridItem(id = index, name = "Item ${index + 1}", isVerified = index % 2 == 0) }
-        GridScreen(items = items, onItemClick = {}, onItemCheckedChange = { _, _ -> })
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Name: User Name", style = MaterialTheme.typography.titleLarge)
+            Text("Contract Number: 123456789", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            // Preview a cell with and without text
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Box(modifier = Modifier.weight(1f)) {
+                    GridCell(item = GridItem(0, "Scanned Text Here", true), index = 0, onClick = {}, onCheckedChange = {})
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    GridCell(item = GridItem(1, "", false), index = 1, onClick = {}, onCheckedChange = {})
+                }
+            }
+        }
     }
 }
