@@ -22,6 +22,12 @@ struct ContentView: View {
                     enteredContractID: $enteredContractID,
                     isContractVerified: $isContractVerified
                 )
+                .onChange(of: isContractVerified) { newValue in
+                    if newValue {
+                        // Reset all validation states when entering a new contract
+                        viewModel.resetAllValidationStates()
+                    }
+                }
             } else {
                 // Main app content - directly show GridView
                 NavigationView {
@@ -43,6 +49,8 @@ struct ContentView: View {
                             
                             ToolbarItem(placement: .navigationBarTrailing) {
                                 Button("Logout") {
+                                    // Reset validation states
+                                    viewModel.resetAllValidationStates()
                                     // Reset to login state
                                     isLoggedIn = false
                                     isContractVerified = false

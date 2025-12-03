@@ -9,8 +9,7 @@ import SwiftUI
 
 struct GridView: View {
     @ObservedObject var viewModel: BlindCheckViewModel
-    @State private var selectedMarkerForScanning: MarkerData?
-    @State private var showingCamera = false
+    @State private var markerToScan: MarkerData?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -49,10 +48,8 @@ struct GridView: View {
                                         // Only allow scanning non-center markers
                                         if !isCenter {
                                             print("🔥 TAP DETECTED on marker: \(marker.name)")
-                                            selectedMarkerForScanning = marker
-                                            showingCamera = true
-                                            print("🔥 showingCamera set to: \(showingCamera)")
-                                            print("🔥 selectedMarkerForScanning: \(selectedMarkerForScanning?.name ?? "nil")")
+                                            markerToScan = marker
+                                            print("🔥 markerToScan set to: \(markerToScan?.name ?? "nil")")
                                         } else {
                                             print("❌ Tap on center marker ignored")
                                         }
@@ -82,17 +79,17 @@ struct GridView: View {
                     .font(.headline)
             }
         }
-        .sheet(isPresented: $showingCamera) {
-            if let marker = selectedMarkerForScanning {
-                CameraScanView(
-                    marker: marker,
-                    viewModel: viewModel,
-                    isPresented: $showingCamera
+        .sheet(item: $markerToScan) { marker in
+            CameraScanView(
+                marker: marker,
+                viewModel: self.viewModel,
+                isPresented: Binding(
+                    get: { self.markerToScan != nil },
+                    set: { if !$0 { self.markerToScan = nil } }
                 )
-            } else {
-                Text("No marker selected")
-                    .font(.title)
-                    .foregroundColor(.red)
+            )
+            .onAppear {
+                print("🔥 SHEET PRESENTED for marker: \(marker.name)")
             }
         }
     }
@@ -104,6 +101,7 @@ struct GridView: View {
         return marker.isValidated ? .valid : .notScanned
     }
 }
+
 
 struct MarkerCell: View {
     let marker: MarkerData
@@ -117,10 +115,6 @@ struct MarkerCell: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.5)
-            
-            Text("(\(marker.gridPosition.row),\(marker.gridPosition.column))")
-                .font(.caption2)
-                .foregroundColor(.secondary)
             
             // Validation indicator
             Circle()
@@ -204,13 +198,12 @@ struct MarkerDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Marker Details")
+            Text("Interment Space Details")
                 .font(.headline)
             
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
                     DetailRow(label: "Name", value: marker.name)
-                    DetailRow(label: "Position", value: "Row \(marker.gridPosition.row), Column \(marker.gridPosition.column)")
                     
                     if let scannedText = marker.scannedText {
                         DetailRow(label: "Scanned", value: scannedText)
@@ -243,12 +236,15 @@ struct MarkerDetailView: View {
                 Spacer()
             }
             
-            // Validation buttons
+            Spacer()
+            
+            // Bottom action buttons
             HStack(spacing: 12) {
                 Button(action: {
                     onValidate(true, nil)
                 }) {
-                    Label("Mark Valid", systemImage: "checkmark.circle.fill")
+                    Text("Verify")
+                        .font(.headline)
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -259,11 +255,12 @@ struct MarkerDetailView: View {
                 Button(action: {
                     showingValidationSheet = true
                 }) {
-                    Label("Mark Invalid", systemImage: "xmark.circle.fill")
-                        .foregroundColor(.white)
+                    Text("Cancel")
+                        .font(.headline)
+                        .foregroundColor(.primary)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.red)
+                        .background(Color(.systemGray5))
                         .cornerRadius(10)
                 }
             }

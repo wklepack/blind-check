@@ -88,6 +88,27 @@ class BlindCheckViewModel: ObservableObject {
         saveData()
     }
     
+    /// Reset all markers to unscanned state for a new contract
+    func resetAllValidationStates() {
+        // Reset all markers to unscanned state
+        for (id, var marker) in allMarkers {
+            marker.isValidated = false
+            marker.validationDate = nil
+            marker.validationNotes = nil
+            marker.scannedText = nil
+            allMarkers[id] = marker
+        }
+        
+        // Clear validation results
+        validationResults.removeAll()
+        
+        // Reset to initial grid position
+        selectMarkerAt(GridPosition(row: 2, column: 2))
+        
+        // Save the updated state
+        saveData()
+    }
+    
     func selectMarkerAt(_ position: GridPosition) {
         let grid = buildGrid(centerPosition: position)
         currentGrid = grid
