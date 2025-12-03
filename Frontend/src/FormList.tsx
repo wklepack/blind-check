@@ -35,7 +35,6 @@ export default function FormList({ onView }: Props) {
 
     function handleViewClick(item: { contractNumber: string; decedentName: string }) {
         onView();
-        alert(`Viewing form ${item.contractNumber} — ${item.decedentName}`);
     }
 
     return (
@@ -76,7 +75,7 @@ export default function FormList({ onView }: Props) {
                             className={`w-28 text-xs px-2 py-1 rounded text-center ${
                                 item.verified
                                     ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                    : "bg-yellow-100 text-yellow-700"
                             }`}
                         >
                             {item.verified ? "Verified" : "Unverified"}
