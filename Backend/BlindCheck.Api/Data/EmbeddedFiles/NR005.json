@@ -1,0 +1,18 @@
+{
+  "ContractNumber": "NR005",
+  "Counselor": {
+    "Name": "David Martinez"
+  },
+  "MarkerPlacements": [
+    {
+      "X": 350,
+      "Y": 180,
+      "Inscription": "Patricia Ann Miller"
+    }
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": false,
+    "VerifiedBy": false,
+    "VerifiedAt": "2025-02-15T16:20:00Z"
+  }
+}

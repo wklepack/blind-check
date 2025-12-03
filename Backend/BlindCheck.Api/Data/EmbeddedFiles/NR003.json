@@ -1,0 +1,28 @@
+{
+  "ContractNumber": "NR003",
+  "Counselor": {
+    "Name": "Michael Brown"
+  },
+  "MarkerPlacements": [
+    {
+      "X": 250,
+      "Y": 300,
+      "Inscription": "Mary Elizabeth Thompson"
+    },
+    {
+      "X": 400,
+      "Y": 300,
+      "Inscription": "1945 - 2024"
+    },
+    {
+      "X": 325,
+      "Y": 350,
+      "Inscription": "Rest in Peace"
+    }
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": true,
+    "VerifiedBy": true,
+    "VerifiedAt": "2025-02-01T09:15:00Z"
+  }
+}
