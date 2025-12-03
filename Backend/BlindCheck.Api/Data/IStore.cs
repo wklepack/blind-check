@@ -4,5 +4,5 @@ namespace BlindCheck.Api.Data;
 
 public interface IStore
 {
-    public Task<BlindCheckForm?> GetBlindCheckFormByCaseIdAsync(string caseId);
+    public Task<BlindCheckForm?> GetBlindCheckFormByCaseIdAsync(string contractNumber);
 }

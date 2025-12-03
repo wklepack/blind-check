@@ -12,9 +12,9 @@ public class EmbededFileStore(ILogger<EmbededFileStore> logger) : IStore
         PropertyNameCaseInsensitive = true
     };
 
-    public async Task<BlindCheckForm?> GetBlindCheckFormByCaseIdAsync(string caseId)
+    public async Task<BlindCheckForm?> GetBlindCheckFormByCaseIdAsync(string contractNumber)
     {
-        var resourceName = $"{caseId}.json";
+        var resourceName = $"{contractNumber}.json";
 
         // Get all embedded resource names to find the matching one
         var allResources = _assembly.GetManifestResourceNames();

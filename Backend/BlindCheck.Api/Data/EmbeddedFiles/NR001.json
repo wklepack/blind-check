@@ -1,6 +1,7 @@
 {
   "formMetadata": {
     "hmisCase": "CASE001",
+    "contractNumber": "NR001",
     "isPreneedMemorial": false
   },
   "caseInfo": {
@@ -44,18 +45,33 @@
     "confirmedCryptNiche": "Crypt 123",
     "diagram": [
       {
-        "x": 100,
-        "y": 200,
+        "x": 1,
+        "y": 1,
         "inscription": "Johnson Family Memorial"
       },
       {
-        "x": 150,
-        "y": 200,
+        "x": 1,
+        "y": 2,
         "inscription": "Smith Plot"
       },
       {
-        "x": 100,
-        "y": 250,
+        "x": 1,
+        "y": 3,
+        "inscription": "Anderson Memorial"
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "inscription": "Smith Plot"
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "inscription": "Anderson Memorial"
+      },
+      {
+        "x": 3,
+        "y": 3,
         "inscription": "Anderson Memorial"
       }
     ],
