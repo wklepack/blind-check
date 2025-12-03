@@ -39,9 +39,14 @@ data class GridItem(
 )
 
 class MainActivity : ComponentActivity() {
+    private lateinit var contractNumber: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        contractNumber = intent.getStringExtra("contractNumber") ?: ""
+
         setContent {
             BlindCheckTheme {
                 val context = LocalContext.current
@@ -95,7 +100,7 @@ class MainActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "Contract Number: 123456789",
+                            text = "Contract Number: $contractNumber",
                             style = MaterialTheme.typography.bodyMedium
                         )
 
