@@ -5,14 +5,14 @@
   },
   "MarkerPlacements": [
     {
-      "X": 150,
-      "Y": 200,
-      "Inscription": "In Loving Memory of Jane Doe"
+      "X": 1,
+      "Y": 1,
+      "Inscription": "Michael Johnson"
     },
     {
-      "X": 300,
-      "Y": 200,
-      "Inscription": "Beloved Mother and Wife"
+      "X": 1,
+      "Y": 2,
+      "Inscription": "Emily Davis"
     }
   ],
   "BlindCheckVerification": {

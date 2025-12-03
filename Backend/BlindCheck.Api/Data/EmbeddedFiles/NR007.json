@@ -5,14 +5,14 @@
   },
   "MarkerPlacements": [
     {
-      "X": 200,
-      "Y": 160,
-      "Inscription": "Susan Marie Garcia"
+      "X": 3,
+      "Y": 1,
+      "Inscription": "Jessica Anderson"
     },
     {
-      "X": 200,
-      "Y": 200,
-      "Inscription": "Beloved Wife and Sister"
+      "X": 3,
+      "Y": 2,
+      "Inscription": "Daniel Thompson"
     }
   ],
   "BlindCheckVerification": {

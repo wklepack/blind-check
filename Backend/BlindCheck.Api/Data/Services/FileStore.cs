@@ -117,6 +117,40 @@ public class FileStore() : IStore
         return forms;
     }
 
+    public async Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified, string userName)
+    {
+        try
+        {
+            // Get the existing form from CosmosDB
+            var form = await GetBlindCheckFromFromDb(contractNumber);
+
+            if (form == null)
+            {
+                _logger.LogWarning($"BlindCheckForm with contract number '{contractNumber}' not found for verification update");
+                return false;
+            }
+
+            // Update the verification status
+            form.BlindCheckVerification.IsVerified = isVerified;
+            form.BlindCheckVerification.VerifiedBy = userName;
+            form.BlindCheckVerification.VerifiedAt = DateTime.UtcNow;
+
+            // Save the updated form back to CosmosDB
+            await _container.UpsertItemAsync(
+                item: form,
+                partitionKey: new PartitionKey(contractNumber)
+            );
+
+            _logger.LogInformation($"Successfully updated verification status for BlindCheckForm with contract number '{contractNumber}' to {isVerified}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error updating verification status for BlindCheckForm with contract number '{contractNumber}'");
+            throw new InvalidOperationException($"Failed to update verification status for contract number '{contractNumber}'", ex);
+        }
+    }
+
     public async Task<BlindCheckForm?> GetBlindCheckFromFromDb(string caseId)
     {
         try
