@@ -45,12 +45,16 @@ struct CameraScanView: View {
                     // Live camera preview
                     LiveCameraView(
                         onTextDetected: { detectedText in
+                            // Only process text if not showing manual validation
+                            guard !showingManualValidation else { return }
+                            
                             let cleanedText = cleanDetectedText(detectedText)
                             if cleanedText != scannedText && !cleanedText.isEmpty {
                                 scannedText = cleanedText
                                 checkTextMatch(cleanedText)
                             }
-                        }
+                        },
+                        isActive: !showingManualValidation
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .frame(height: 230)
@@ -85,8 +89,8 @@ struct CameraScanView: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(matchPercentage >= 70 ? Color.green.opacity(0.2) : Color.orange.opacity(0.2))
-                                .foregroundColor(matchPercentage >= 70 ? .green : .orange)
+                                .background(matchPercentage >= 85 ? Color.green.opacity(0.2) : Color.orange.opacity(0.2))
+                                .foregroundColor(matchPercentage >= 85 ? .green : .orange)
                                 .cornerRadius(4)
                         }
                     }
@@ -115,7 +119,7 @@ struct CameraScanView: View {
                 VStack(spacing: 12) {
                     if !scannedText.isEmpty {
                         HStack(spacing: 12) {
-                            if isTextMatched || matchPercentage >= 70 {
+                            if isTextMatched || matchPercentage >= 85 {
                                 Button("✓ Mark Valid") {
                                     viewModel.manualValidation(
                                         for: marker,
@@ -213,8 +217,8 @@ struct CameraScanView: View {
         // Use the best similarity score
         matchPercentage = max(wordSimilarity, editDistance) * 100
         
-        // More flexible matching criteria
-        isTextMatched = containsMatch || matchPercentage >= 60
+        // Strict matching criteria - require 85% or higher match
+        isTextMatched = containsMatch || matchPercentage >= 85
         
         print("🔍 Marker: '\(markerName)'")
         print("📱 Scanned: '\(scannedLower)'")
@@ -277,18 +281,30 @@ struct CameraScanView: View {
 // MARK: - Live Camera View with Real-time Text Detection
 struct LiveCameraView: UIViewRepresentable {
     let onTextDetected: (String) -> Void
+    let isActive: Bool
     
     func makeUIView(context: Context) -> CameraPreviewView {
         let previewView = CameraPreviewView()
         previewView.onTextDetected = onTextDetected
+        previewView.isTextDetectionActive = isActive
         return previewView
     }
     
-    func updateUIView(_ uiView: CameraPreviewView, context: Context) {}
+    func updateUIView(_ uiView: CameraPreviewView, context: Context) {
+        uiView.isTextDetectionActive = isActive
+    }
 }
 
 class CameraPreviewView: UIView {
     var onTextDetected: ((String) -> Void)?
+    var isTextDetectionActive: Bool = true {
+        didSet {
+            if !isTextDetectionActive {
+                // Reset detection time to avoid immediate detection when reactivated
+                lastTextDetectionTime = Date()
+            }
+        }
+    }
     
     private var captureSession: AVCaptureSession!
     private var previewLayer: AVCaptureVideoPreviewLayer!
@@ -367,6 +383,11 @@ class CameraPreviewView: UIView {
 
 extension CameraPreviewView: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        // Skip text detection if not active (e.g., when manual validation is showing)
+        guard isTextDetectionActive else {
+            return
+        }
+        
         // Throttle text detection to avoid too frequent processing
         let now = Date()
         guard now.timeIntervalSince(lastTextDetectionTime) >= textDetectionInterval else {
