@@ -3,6 +3,9 @@
   "Counselor": {
     "Name": "Michael Brown"
   },
+  "Decedent": {
+    "Name": "Thomas Anderson"
+  },
   "MarkerPlacements": [
     {
       "X": 2,

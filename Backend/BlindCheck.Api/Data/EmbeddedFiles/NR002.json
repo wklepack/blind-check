@@ -3,6 +3,9 @@
   "Counselor": {
     "Name": "Sarah Johnson"
   },
+  "Decedent": {
+    "Name": "Elizabeth Williams"
+  },
   "MarkerPlacements": [
     {
       "X": 1,
