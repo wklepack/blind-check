@@ -1,1 +1,0 @@
-# blind-check README
