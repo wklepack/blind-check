@@ -21,60 +21,59 @@ export default function FormList({ onView }: Props) {
     const [search, setSearch] = useState("");
 
     const data = [
-        { formId: "F12345", verified: true, decedentName: "John Doe" },
-        { formId: "F67890", verified: false, decedentName: "Jane Smith" },
-        { formId: "F54321", verified: true, decedentName: "Michael Brown" },
-        { formId: "F98765", verified: false, decedentName: "Emily Davis" },
-        { formId: "F00123", verified: true, decedentName: "Alicia Gomez" },
-        { formId: "F00999", verified: false, decedentName: "Robert Chen" },
+        { contractNumber: "F12345", verified: true, decedentName: "John Doe" },
+        { contractNumber: "F67890", verified: false, decedentName: "Jane Smith" },
+        { contractNumber: "F54321", verified: true, decedentName: "Michael Brown" },
+        { contractNumber: "F98765", verified: false, decedentName: "Emily Davis" },
+        { contractNumber: "F00123", verified: true, decedentName: "Alicia Gomez" },
+        { contractNumber: "F00999", verified: false, decedentName: "Robert Chen" },
     ];
 
     const filtered = data.filter(
-        (item) => fuzzyMatch(search, item.formId) || fuzzyMatch(search, item.decedentName)
+        (item) => fuzzyMatch(search, item.contractNumber) || fuzzyMatch(search, item.decedentName)
     );
 
-    function handleViewClick(item: { formId: string; decedentName: string }) {
+    function handleViewClick(item: { contractNumber: string; decedentName: string }) {
         onView();
-        alert(`Viewing form ${item.formId} — ${item.decedentName}`);
+        alert(`Viewing form ${item.contractNumber} — ${item.decedentName}`);
     }
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[28rem]">
-            <h2 className="text-2xl font-bold mb-4 text-center">Forms</h2>
+        <div className="bg-white p-6 rounded-lg shadow-md w-[600px]">
+            <h2 className="text-2xl font-bold mb-4 text-center">Blind Check Forms</h2>
 
             {/* Search Field */}
             <input
                 type="text"
-                placeholder="Search by Form ID or Name"
+                placeholder="Search by contract number or decedent name"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
 
             {/* Column Headers */}
-            <div className="grid grid-cols-[6rem_1fr_6rem_auto] font-semibold text-gray-700 text-sm border-b pb-2 mb-2">
-                <span>Form ID</span>
-                <span>Decedent Name</span>
-                <span className="text-center">Status</span>
-                <span className="text-center">Action</span>
+            <div className="flex font-semibold text-gray-700 text-sm border-b pb-2 mb-2">
+                <span className="w-32">Contract Number</span>
+                <span className="w-[240px]">Decedent Name</span>
+                <span className="w-28 text-center">Status</span>
             </div>
 
             {/* Scrollable List */}
             <div className="max-h-64 overflow-y-auto border border-gray-200 rounded">
                 {filtered.map((item) => (
                     <div
-                        key={item.formId}
-                        className="grid grid-cols-[6rem_1fr_6rem_auto] items-center gap-3 p-3 border-b last:border-none hover:bg-gray-50"
+                        key={item.contractNumber}
+                        className="flex items-center gap-3 p-3 border-b last:border-none hover:bg-gray-50"
                     >
-                        {/* Form ID */}
-                        <span className="font-medium">{item.formId}</span>
+                        {/* Contract Number */}
+                        <span className="w-32 font-medium">{item.contractNumber}</span>
 
                         {/* Decedent Name */}
-                        <span className="truncate">{item.decedentName}</span>
+                        <span className="flex-1 truncate">{item.decedentName}</span>
 
                         {/* Status Badge */}
                         <span
-                            className={`text-xs px-2 py-1 rounded text-center ${
+                            className={`w-28 text-xs px-2 py-1 rounded text-center ${
                                 item.verified
                                     ? "bg-green-100 text-green-700"
                                     : "bg-red-100 text-red-700"
@@ -83,11 +82,11 @@ export default function FormList({ onView }: Props) {
                             {item.verified ? "Verified" : "Unverified"}
                         </span>
 
-                        {/* View Icon */}
+                        {/* View Icon (aligned to far right) */}
                         <button
                             type="button"
                             onClick={() => handleViewClick(item)}
-                            className="text-gray-500 hover:text-gray-700 p-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            className="ml-2 text-gray-500 hover:text-gray-700 p-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
                             title="View"
                         >
                             <svg
