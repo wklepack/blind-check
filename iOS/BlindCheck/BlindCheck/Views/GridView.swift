@@ -12,23 +12,25 @@ struct GridView: View {
     @State private var markerToScan: MarkerData?
     
     var body: some View {
-        VStack(spacing: 0) {
-            if let grid = viewModel.currentGrid {
-                // Instructions banner
-                HStack {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.blue)
-                    Text("Tap any surrounding marker to scan and verify")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                .background(Color.blue.opacity(0.1))
-                
-                // 3x3 Grid
-                VStack(spacing: 2) {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 0) {
+                    if let grid = viewModel.currentGrid {
+                        // Instructions banner
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text("Tap any surrounding marker to scan and verify")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .background(Color.blue.opacity(0.1))
+                        
+                        // 3x3 Grid - takes at least half the screen
+                        VStack(spacing: 2) {
                     ForEach(-1...1, id: \.self) { row in
                         HStack(spacing: 2) {
                             ForEach(-1...1, id: \.self) { col in
@@ -62,6 +64,7 @@ struct GridView: View {
                     }
                 }
                 .padding()
+                .frame(minHeight: geometry.size.height * 0.5)
                 
                 // Center marker details
                 if let centerMarker = viewModel.selectedMarker {
@@ -73,10 +76,12 @@ struct GridView: View {
                         }
                     )
                 }
-            } else {
-                Text("No grid selected")
-                    .foregroundColor(.gray)
-                    .font(.headline)
+                    } else {
+                        Text("No grid selected")
+                            .foregroundColor(.gray)
+                            .font(.headline)
+                    }
+                }
             }
         }
         .sheet(item: $markerToScan) { marker in
@@ -196,6 +201,14 @@ struct MarkerDetailView: View {
     @State private var showingValidationSheet = false
     @State private var validationNotes = ""
     
+    // Checkbox states
+    @State private var memorialPlacement: String = ""
+    @State private var agreesWithAdjacentInterments: String = ""
+    @State private var agreesWithLotPins: String = ""
+    @State private var agreesWithPermanentRecords: String = ""
+    @State private var agreesWithIntermentOrder: String = ""
+    @State private var agreesWithDisintermentOrder: String = ""
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Interment Space Details")
@@ -235,6 +248,48 @@ struct MarkerDetailView: View {
                 
                 Spacer()
             }
+            
+            // Checkpoint questions
+            VStack(alignment: .leading, spacing: 16) {
+                Divider()
+                
+                CheckboxGroup(
+                    question: "1. Are memorials placed at the head or the foot?",
+                    options: ["Head", "Foot", "N/A (above ground)"],
+                    selection: $memorialPlacement
+                )
+                
+                CheckboxGroup(
+                    question: "2. Agrees with Adjacent Interments (from memorials):",
+                    options: ["Yes", "No", "N/A (none nearby)"],
+                    selection: $agreesWithAdjacentInterments
+                )
+                
+                CheckboxGroup(
+                    question: "3. Agrees with 2 numbered lot pins:",
+                    options: ["Yes", "No", "N/A (above ground)"],
+                    selection: $agreesWithLotPins
+                )
+                
+                CheckboxGroup(
+                    question: "4. Agrees with Permanent Records:",
+                    options: ["Yes", "No"],
+                    selection: $agreesWithPermanentRecords
+                )
+                
+                CheckboxGroup(
+                    question: "5. Agrees with Interment Order & Authorization:",
+                    options: ["Yes", "No", "N/A (Preneed)"],
+                    selection: $agreesWithIntermentOrder
+                )
+                
+                CheckboxGroup(
+                    question: "6. Agrees with Disinterment Order & Authorization:",
+                    options: ["Yes", "No", "N/A (No disinterment)"],
+                    selection: $agreesWithDisintermentOrder
+                )
+            }
+            .padding(.top)
             
             Spacer()
             
@@ -343,6 +398,40 @@ struct ValidationNotesSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - CheckboxGroup Component
+struct CheckboxGroup: View {
+    let question: String
+    let options: [String]
+    @Binding var selection: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(question)
+                .font(.subheadline)
+                .fontWeight(.medium)
+            
+            HStack(spacing: 16) {
+                ForEach(options, id: \.self) { option in
+                    Button(action: {
+                        selection = selection == option ? "" : option
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: selection == option ? "checkmark.square.fill" : "square")
+                                .foregroundColor(selection == option ? .blue : .gray)
+                                .font(.system(size: 16))
+                            
+                            Text(option)
+                                .font(.caption)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
