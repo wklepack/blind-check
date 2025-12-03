@@ -5,14 +5,14 @@
   },
   "MarkerPlacements": [
     {
-      "X": 180,
-      "Y": 220,
-      "Inscription": "James Patrick O'Connor"
+      "X": 3,
+      "Y": 2,
+      "Inscription": "James Wilson"
     },
     {
-      "X": 180,
-      "Y": 270,
-      "Inscription": "Loving Father and Grandfather"
+      "X": 3,
+      "Y": 3,
+      "Inscription": "Sarah Harris"
     }
   ],
   "BlindCheckVerification": {

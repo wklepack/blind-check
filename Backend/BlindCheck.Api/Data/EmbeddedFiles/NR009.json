@@ -5,19 +5,19 @@
   },
   "MarkerPlacements": [
     {
-      "X": 160,
-      "Y": 190,
-      "Inscription": "Margaret Louise Harris"
+      "X": 1,
+      "Y": 1,
+      "Inscription": "James Wilson"
     },
     {
-      "X": 310,
-      "Y": 190,
-      "Inscription": "1950 - 2024"
+      "X": 1,
+      "Y": 2,
+      "Inscription": "Sarah Harris"
     },
     {
-      "X": 235,
-      "Y": 230,
-      "Inscription": "Teacher, Friend, Inspiration"
+      "X": 1,
+      "Y": 3,
+      "Inscription": "Andrew Clark"
     }
   ],
   "BlindCheckVerification": {

@@ -5,19 +5,19 @@
   },
   "MarkerPlacements": [
     {
-      "X": 220,
-      "Y": 210,
-      "Inscription": "Daniel Joseph Clark"
+      "X": 2,
+      "Y": 1,
+      "Inscription": "Amanda Wright"
     },
     {
-      "X": 220,
-      "Y": 250,
-      "Inscription": "Devoted Husband and Father"
+      "X": 2,
+      "Y": 3,
+      "Inscription": "Michael Johnson"
     },
     {
-      "X": 220,
-      "Y": 290,
-      "Inscription": "Gone But Never Forgotten"
+      "X": 3,
+      "Y": 1,
+      "Inscription": "Emily Davis"
     }
   ],
   "BlindCheckVerification": {
