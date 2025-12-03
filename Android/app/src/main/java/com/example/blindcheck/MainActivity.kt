@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
 
                 if (showSuccessDialog) {
                     AlertDialog(
-                        onDismissRequest = { 
+                        onDismissRequest = {
                             showSuccessDialog = false
                             val intent = Intent(context, LoginActivity::class.java)
                             context.startActivity(intent)
@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                 if (isVerifying) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                        color = MaterialTheme.colorScheme.secondary
                                     )
                                 } else {
                                     Text(text = "Verify")
