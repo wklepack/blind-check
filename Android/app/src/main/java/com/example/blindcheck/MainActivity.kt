@@ -30,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.blindcheck.ui.theme.BlindCheckTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 // Data class to hold the state for each grid item
 data class GridItem(
@@ -62,6 +64,9 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 var currentEditingItemId by remember { mutableStateOf<Int?>(null) }
+                var isVerifying by remember { mutableStateOf(false) }
+                var showSuccessDialog by remember { mutableStateOf(false) }
+                val scope = rememberCoroutineScope()
 
                 var activityResult by remember { mutableStateOf<ActivityResult?>(null) }
 
@@ -90,6 +95,28 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                if (showSuccessDialog) {
+                    AlertDialog(
+                        onDismissRequest = { 
+                            showSuccessDialog = false
+                            val intent = Intent(context, LoginActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        title = { Text("Success") },
+                        text = { Text("Data sent successfully.") },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    showSuccessDialog = false
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    context.startActivity(intent)
+                                }
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    )
+                }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
@@ -140,11 +167,40 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        Button(
-                            onClick = { /* TODO: Handle button click */ },
-                            modifier = Modifier.fillMaxWidth()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            Text(text = "Verify Blind Check")
+                            Button(
+                                onClick = {
+                                    scope.launch {
+                                        isVerifying = true
+                                        delay(2000)
+                                        isVerifying = false
+                                        showSuccessDialog = true
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                                enabled = !isVerifying
+                            ) {
+                                if (isVerifying) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                } else {
+                                    Text(text = "Verify")
+                                }
+                            }
+                            Button(
+                                onClick = {
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    context.startActivity(intent)
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = "Cancel")
+                            }
                         }
                     }
                 }
