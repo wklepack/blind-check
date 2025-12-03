@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { getListData, type BlindCheckForm } from "./api";
+import { useState } from "react";
+import { type BlindCheckForm } from "./api";
 
 interface Props {
     onView: (item: BlindCheckForm) => void; // Pass full object for View step
+    list: BlindCheckForm[];
+    error: string | null;
 }
 
 function fuzzyMatch(query: string, target: string) {
@@ -18,29 +20,14 @@ function fuzzyMatch(query: string, target: string) {
     return i === q.length;
 }
 
-export default function FormList({ onView }: Props) {
+export default function FormList({ onView, list: data, error }: Props) {
     const [search, setSearch] = useState("");
-    const [data, setData] = useState<BlindCheckForm[] | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await getListData();
-                setData(result ?? []);
-            } catch (err) {
-                setError("Failed to load forms. Please try again.");
-            }
-        };
-        fetchData();
-    }, []);
-
     const filtered = (data ?? []).filter(
-        (item) => fuzzyMatch(search, item.contractNumber) //|| fuzzyMatch(search, item.decedentName ?? "")
+        (item) => fuzzyMatch(search, item.contractNumber) || fuzzyMatch(search, item.decedent.name)
     );
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[600px]">
+        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem] mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Blind Check Forms</h2>
 
             {/* Search Field */}
@@ -60,7 +47,7 @@ export default function FormList({ onView }: Props) {
             </div>
 
             {/* Scrollable List */}
-            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded">
+            <div className="max-h-100 overflow-y-auto border border-gray-200 rounded">
                 {!data && !error && <div className="p-3 text-gray-500 text-center">Loading...</div>}
                 {error && <div className="p-3 text-red-600 text-center">{error}</div>}
                 {data && filtered.length === 0 && (
@@ -76,9 +63,7 @@ export default function FormList({ onView }: Props) {
                         <span className="w-32 font-medium">{item.contractNumber}</span>
 
                         {/* Decedent Name */}
-                        <span className="flex-1 truncate">
-                            {item.decedentName ? item.decedentName : ""}
-                        </span>
+                        <span className="flex-1 truncate">{item.decedent.name}</span>
 
                         {/* Status Badge */}
                         <span

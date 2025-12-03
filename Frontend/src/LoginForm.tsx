@@ -2,14 +2,16 @@ import { useState } from "react";
 
 interface Props {
     onLogin: () => void;
+    onLoginStart: () => void;
 }
 
-export default function LoginForm({ onLogin }: Props) {
+export default function LoginForm({ onLogin, onLoginStart }: Props) {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+        onLoginStart();
 
         // Fake loading for 2 seconds
         setTimeout(() => {
@@ -21,7 +23,7 @@ export default function LoginForm({ onLogin }: Props) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-80">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-80 mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Login to you account</h2>
 
             <div className="mb-4">

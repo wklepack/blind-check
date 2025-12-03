@@ -9,22 +9,19 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
     const { contractNumber, counselor, markerPlacements, blindCheckVerification } = selectedForm;
     const isVerified = blindCheckVerification.isVerified;
 
-    // Derive decedent name from first marker inscription (best-effort)
     const decedentName =
         markerPlacements.length > 0
             ? markerPlacements[0].inscription.split("-")[0].trim()
             : "Unknown";
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem]">
-            {/* Top bar with Back button and Contract Number */}
+        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem] mx-auto">
+            {/* Top bar */}
             <div className="flex items-center mb-6">
                 <button
                     type="button"
                     onClick={onBack}
                     className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    aria-label="Go back"
-                    title="Back"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +50,7 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
                 </div>
             </div>
 
-            {/* Arrangement Counselor Section */}
+            {/* Arrangement Counselor */}
             <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4">Arrangement Counselor</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -62,8 +59,8 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
                 </div>
             </div>
 
-            {/* Blind Check Section */}
-            <div>
+            {/* Blind Check */}
+            <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4">Blind Check</h3>
                 <div className="grid grid-cols-3 gap-4">
                     {Array.from({ length: 9 }).map((_, index) => {
@@ -84,11 +81,9 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
                                 {isMiddle ? (
                                     <span className="text-sm font-semibold">{decedentName}</span>
                                 ) : marker ? (
-                                    <>
-                                        <span className="text-xs font-medium">
-                                            {marker.inscription}
-                                        </span>
-                                    </>
+                                    <span className="text-xs font-medium">
+                                        {marker.inscription}
+                                    </span>
                                 ) : (
                                     <span className="text-xs text-gray-500">—</span>
                                 )}
@@ -97,6 +92,15 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
                     })}
                 </div>
             </div>
+
+            {/* ✅ Full-width Print Button */}
+            <button
+                type="button"
+                onClick={() => window.print()}
+                className="w-full bg-teal-500 text-white font-semibold py-3 rounded hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            >
+                Print Form
+            </button>
         </div>
     );
 }

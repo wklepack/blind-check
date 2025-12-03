@@ -8,6 +8,10 @@ export interface Counselor {
     name: string; // Counselor's name
 }
 
+export interface Decedent {
+    name: string;
+}
+
 export interface BlindCheckVerification {
     isVerified: boolean; // Whether blind check is verified
     verifiedBy: boolean; // Indicates if verified by a person/system
@@ -17,6 +21,7 @@ export interface BlindCheckVerification {
 export interface BlindCheckForm {
     contractNumber: string; // Unique contract number
     counselor: Counselor; // Counselor details
+    decedent: Decedent;
     markerPlacements: MarkerPlacement[]; // List of marker placements
     blindCheckVerification: BlindCheckVerification; // Verification details
 }
