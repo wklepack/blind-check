@@ -118,9 +118,8 @@ struct CameraScanView: View {
                 // Action buttons
                 VStack(spacing: 12) {
                     if !scannedText.isEmpty {
-                        if isTextMatched || matchPercentage >= 85 {
-                            // Show both buttons when text matches
-                            HStack(spacing: 12) {
+                        HStack(spacing: 12) {
+                            if isTextMatched || matchPercentage >= 85 {
                                 Button("✓ Mark Valid") {
                                     viewModel.manualValidation(
                                         for: marker,
@@ -136,19 +135,8 @@ struct CameraScanView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .font(.headline)
-                                
-                                Button("✗ Mark Invalid") {
-                                    showingManualValidation = true
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.red)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                                .font(.headline)
                             }
-                        } else {
-                            // Show only Mark Invalid button when text doesn't match
+                            
                             Button("✗ Mark Invalid") {
                                 showingManualValidation = true
                             }
@@ -505,11 +493,6 @@ struct ManualValidationView: View {
                 }
                 
                 Section {
-                    Button("Mark as Valid") {
-                        onComplete(true, "Manual validation: Valid")
-                    }
-                    .foregroundColor(.green)
-                    
                     Button("Mark as Invalid") {
                         let finalNotes = selectedReason + (notes.isEmpty ? "" : " - \(notes)")
                         onComplete(false, finalNotes)
