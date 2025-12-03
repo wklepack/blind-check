@@ -117,25 +117,25 @@ public class FileStore() : IStore
         return forms;
     }
 
-    public async Task<BlindCheckForm?> GetBlindCheckFromFromDb(string caseId)
+    public async Task<BlindCheckForm?> GetBlindCheckFromFromDbAsync(string contractNumber)
     {
         try
         {
             var response = await _container.ReadItemAsync<BlindCheckForm>(
-                id: caseId,
-                partitionKey: new PartitionKey(caseId)
+                id: contractNumber,
+                partitionKey: new PartitionKey(contractNumber)
             );
 
             return response.Resource;
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            _logger?.LogInformation($"BlindCheckForm with caseId '{caseId}' not found in CosmosDB");
+            _logger?.LogInformation($"BlindCheckForm with caseId '{contractNumber}' not found in CosmosDB");
             return null;
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, $"Error retrieving BlindCheckForm with caseId '{caseId}' from CosmosDB");
+            _logger?.LogError(ex, $"Error retrieving BlindCheckForm with caseId '{contractNumber}' from CosmosDB");
             throw;
         }
     }

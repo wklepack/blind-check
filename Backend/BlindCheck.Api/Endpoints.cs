@@ -15,7 +15,7 @@ public static class Endpoints
 
         app.MapGet("/api/blind-check-form/{caseId}", async (string caseId, IStore store) =>
         {
-            var entity = await store.GetBlindCheckFormByCaseIdAsync(caseId);
+            var entity = await store.GetBlindCheckFromFromDbAsync(caseId);
             if(entity == null)
             {
                 return Results.NotFound(new
