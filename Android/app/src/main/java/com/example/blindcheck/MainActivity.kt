@@ -118,6 +118,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Button(
+                            onClick = { /* TODO: Handle button click */ },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text = "Verify Blind Check")
+                        }
                     }
                 }
             }
