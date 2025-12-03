@@ -1,0 +1,7 @@
+@Api_HostAddress = http://localhost:5130
+@CaseId = Case001
+
+GET {{Api_HostAddress}}//api/blind-check-form/{{CaseId}}
+Accept: application/json
+
+###
