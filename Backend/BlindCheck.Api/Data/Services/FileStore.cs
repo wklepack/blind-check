@@ -117,7 +117,7 @@ public class FileStore() : IStore
         return forms;
     }
 
-    public async Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified)
+    public async Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified, string userName)
     {
         try
         {
@@ -132,6 +132,7 @@ public class FileStore() : IStore
 
             // Update the verification status
             form.BlindCheckVerification.IsVerified = isVerified;
+            form.BlindCheckVerification.VerifiedBy = userName;
             form.BlindCheckVerification.VerifiedAt = DateTime.UtcNow;
 
             // Save the updated form back to CosmosDB

@@ -5,23 +5,23 @@
   },
   "MarkerPlacements": [
     {
-      "X": 120,
-      "Y": 280,
+      "X": 1,
+      "Y": 2,
       "Inscription": "William Henry Anderson"
     },
     {
-      "X": 270,
-      "Y": 280,
+      "X": 1,
+      "Y": 3,
       "Inscription": "1938 - 2025"
     },
     {
-      "X": 195,
-      "Y": 320,
+      "X": 2,
+      "Y": 1,
       "Inscription": "Veteran - US Navy"
     },
     {
-      "X": 195,
-      "Y": 360,
+      "X": 2,
+      "Y": 3,
       "Inscription": "Always Remembered"
     }
   ],

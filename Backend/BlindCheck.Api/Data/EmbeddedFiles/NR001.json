@@ -5,13 +5,13 @@
   },
   "MarkerPlacements": [
     {
-      "X": 150,
-      "Y": 200,
+      "X": 1,
+      "Y": 1,
       "Inscription": "In Loving Memory of Jane Doe"
     },
     {
-      "X": 300,
-      "Y": 200,
+      "X": 1,
+      "Y": 2,
       "Inscription": "Beloved Mother and Wife"
     }
   ],

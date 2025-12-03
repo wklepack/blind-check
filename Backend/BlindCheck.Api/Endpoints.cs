@@ -39,7 +39,7 @@ public static class Endpoints
                 });
             }
 
-            var updated = await store.UpdateBlindCheckVerificationAsync(contractNumber, request.IsVerified);
+            var updated = await store.UpdateBlindCheckVerificationAsync(contractNumber, request.IsVerified, request.UserName);
             if (!updated)
             {
                 return Results.Problem("Failed to update blind check verification.");

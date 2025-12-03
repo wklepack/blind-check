@@ -5,18 +5,18 @@
   },
   "MarkerPlacements": [
     {
-      "X": 250,
-      "Y": 300,
+      "X": 2,
+      "Y": 1,
       "Inscription": "Mary Elizabeth Thompson"
     },
     {
-      "X": 400,
-      "Y": 300,
+      "X": 2,
+      "Y": 3,
       "Inscription": "1945 - 2024"
     },
     {
-      "X": 325,
-      "Y": 350,
+      "X": 3,
+      "Y": 1,
       "Inscription": "Rest in Peace"
     }
   ],

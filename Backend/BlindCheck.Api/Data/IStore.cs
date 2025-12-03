@@ -9,5 +9,5 @@ public interface IStore
     public Task<BlindCheckForm> SaveBlindCheckFormAsync(BlindCheckForm form);
     public Task<int> SeedDatabaseFromEmbeddedFilesAsync();
     public Task<IEnumerable<BlindCheckForm>> GetAllBlindCheckFormsAsync();
-    public Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified);
+    public Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified, string userName);
 }
