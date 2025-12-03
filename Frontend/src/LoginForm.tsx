@@ -2,14 +2,16 @@ import { useState } from "react";
 
 interface Props {
     onLogin: () => void;
+    onLoginStart: () => void;
 }
 
-export default function LoginForm({ onLogin }: Props) {
+export default function LoginForm({ onLogin, onLoginStart }: Props) {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+        onLoginStart();
 
         // Fake loading for 2 seconds
         setTimeout(() => {

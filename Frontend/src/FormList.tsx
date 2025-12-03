@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { getListData, type BlindCheckForm } from "./api";
+import { useState } from "react";
+import { type BlindCheckForm } from "./api";
 
 interface Props {
     onView: (item: BlindCheckForm) => void; // Pass full object for View step
+    list: BlindCheckForm[];
+    error: string | null;
 }
 
 function fuzzyMatch(query: string, target: string) {
@@ -18,23 +20,8 @@ function fuzzyMatch(query: string, target: string) {
     return i === q.length;
 }
 
-export default function FormList({ onView }: Props) {
+export default function FormList({ onView, list: data, error }: Props) {
     const [search, setSearch] = useState("");
-    const [data, setData] = useState<BlindCheckForm[] | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await getListData();
-                setData(result ?? []);
-            } catch (err) {
-                setError("Failed to load forms. Please try again.");
-            }
-        };
-        fetchData();
-    }, []);
-
     const filtered = (data ?? []).filter(
         (item) => fuzzyMatch(search, item.contractNumber) //|| fuzzyMatch(search, item.decedentName ?? "")
     );
