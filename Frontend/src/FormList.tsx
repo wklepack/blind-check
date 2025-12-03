@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+interface Props {
+    onView: () => void;
+}
+
 function fuzzyMatch(query: string, target: string) {
     const q = query.trim().toLowerCase();
     const t = target.toLowerCase();
@@ -13,7 +17,7 @@ function fuzzyMatch(query: string, target: string) {
     return i === q.length;
 }
 
-export default function FormList() {
+export default function FormList({ onView }: Props) {
     const [search, setSearch] = useState("");
 
     const data = [
@@ -30,6 +34,7 @@ export default function FormList() {
     );
 
     function handleViewClick(item: { formId: string; decedentName: string }) {
+        onView();
         alert(`Viewing form ${item.formId} — ${item.decedentName}`);
     }
 
