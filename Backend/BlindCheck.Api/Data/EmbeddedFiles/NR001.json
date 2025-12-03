@@ -1,110 +1,23 @@
 {
-  "formMetadata": {
-    "hmisCase": "CASE001",
-    "contractNumber": "NR001",
-    "isPreneedMemorial": false
+  "ContractNumber": "NR001",
+  "Counselor": {
+    "Name": "John Smith"
   },
-  "caseInfo": {
-    "hmisCaseId": "CASE001"
-  },
-  "arrangementCounselor": {
-    "counselorName": "John Smith",
-    "conferenceDate": "2024-01-15",
-    "decedentName": {
-      "last": "Johnson",
-      "first": "Robert",
-      "middle": "James"
+  "MarkerPlacements": [
+    {
+      "X": 150,
+      "Y": 200,
+      "Inscription": "In Loving Memory of Jane Doe"
     },
-    "intermentService": {
-      "date": "2024-01-20",
-      "time": "10:30",
-      "timePeriod": "AM"
-    },
-    "locationDetails": {
-      "section": "Section A",
-      "block": "Block 12",
-      "lot": "Lot 45",
-      "building": "Memorial Hall",
-      "tierLevel": "Level 3"
+    {
+      "X": 300,
+      "Y": 200,
+      "Inscription": "Beloved Mother and Wife"
     }
-  },
-  "locationDetails": {
-    "section": "Section A",
-    "block": "Block 12",
-    "lot": "Lot 45",
-    "building": "Memorial Hall",
-    "tierLevel": "Level 3"
-  },
-  "administration": {
-    "adminName": "Jane Doe",
-    "dateTimeReceived": "2024-01-10T14:30:00",
-    "assignedTo": "Mike Williams"
-  },
-  "blindCheckVerification": {
-    "confirmedSpace": "A-12-45",
-    "confirmedCryptNiche": "Crypt 123",
-    "diagram": [
-      {
-        "x": 1,
-        "y": 1,
-        "inscription": "Johnson Family Memorial"
-      },
-      {
-        "x": 1,
-        "y": 2,
-        "inscription": "Smith Plot"
-      },
-      {
-        "x": 1,
-        "y": 3,
-        "inscription": "Anderson Memorial"
-      },
-      {
-        "x": 2,
-        "y": 1,
-        "inscription": "Smith Plot"
-      },
-      {
-        "x": 2,
-        "y": 3,
-        "inscription": "Anderson Memorial"
-      },
-      {
-        "x": 3,
-        "y": 3,
-        "inscription": "Anderson Memorial"
-      }
-    ],
-    "verifications": {
-      "agreesWithAdjacentInterments": {
-        "status": "Yes",
-        "notes": "All adjacent memorials verified and match records"
-      },
-      "agreesWithNumberedPins": {
-        "status": "Yes",
-        "notes": "Pin numbers match exactly"
-      },
-      "agreesWithPermanentRecords": {
-        "status": "Yes",
-        "notes": "Records confirmed in database"
-      },
-      "agreesWithIntermentOrder": {
-        "status": "Yes",
-        "notes": "Order #12345 verified"
-      },
-      "agreesWithDisintermentOrder": {
-        "status": "NA_NoDisinterment",
-        "notes": "No disinterment required"
-      }
-    },
-    "associateSignature": {
-      "name": "Sarah Johnson",
-      "signatureBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-      "date": "2024-01-15"
-    }
-  },
-  "memorialBlindCheck": {
-    "installationVerifiedBy": "Tom Anderson",
-    "date": "2024-01-22"
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": true,
+    "VerifiedBy": true,
+    "VerifiedAt": "2025-01-15T10:30:00Z"
   }
 }

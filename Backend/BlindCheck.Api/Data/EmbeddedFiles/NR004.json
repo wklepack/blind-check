@@ -1,0 +1,23 @@
+{
+  "ContractNumber": "NR004",
+  "Counselor": {
+    "Name": "Emily Davis"
+  },
+  "MarkerPlacements": [
+    {
+      "X": 180,
+      "Y": 220,
+      "Inscription": "James Patrick O'Connor"
+    },
+    {
+      "X": 180,
+      "Y": 270,
+      "Inscription": "Loving Father and Grandfather"
+    }
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": true,
+    "VerifiedBy": true,
+    "VerifiedAt": "2025-02-10T11:00:00Z"
+  }
+}

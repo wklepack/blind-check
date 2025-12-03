@@ -1,0 +1,28 @@
+{
+  "ContractNumber": "NR009",
+  "Counselor": {
+    "Name": "Thomas Wilson"
+  },
+  "MarkerPlacements": [
+    {
+      "X": 160,
+      "Y": 190,
+      "Inscription": "Margaret Louise Harris"
+    },
+    {
+      "X": 310,
+      "Y": 190,
+      "Inscription": "1950 - 2024"
+    },
+    {
+      "X": 235,
+      "Y": 230,
+      "Inscription": "Teacher, Friend, Inspiration"
+    }
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": true,
+    "VerifiedBy": true,
+    "VerifiedAt": "2025-03-10T12:20:00Z"
+  }
+}

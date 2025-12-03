@@ -1,0 +1,23 @@
+{
+  "ContractNumber": "NR007",
+  "Counselor": {
+    "Name": "Robert Taylor"
+  },
+  "MarkerPlacements": [
+    {
+      "X": 200,
+      "Y": 160,
+      "Inscription": "Susan Marie Garcia"
+    },
+    {
+      "X": 200,
+      "Y": 200,
+      "Inscription": "Beloved Wife and Sister"
+    }
+  ],
+  "BlindCheckVerification": {
+    "IsVerified": false,
+    "VerifiedBy": false,
+    "VerifiedAt": "2025-03-01T10:00:00Z"
+  }
+}

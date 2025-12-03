@@ -23,6 +23,7 @@ public class EmbededFileStore(ILogger<EmbededFileStore> logger) : IStore
         if (matchingResource == null)
         {
             logger.LogInformation($"Could not find embedded resource for '{resourceName}'");
+            return null;
         }
 
         await using var stream = _assembly.GetManifestResourceStream(matchingResource);
@@ -34,5 +35,42 @@ public class EmbededFileStore(ILogger<EmbededFileStore> logger) : IStore
         var form = await JsonSerializer.DeserializeAsync<BlindCheckForm>(stream, _jsonOptions);
 
         return form ?? throw new InvalidOperationException($"Failed to deserialize BlindCheckForm from '{matchingResource}'");
+    }
+
+    public async Task<IEnumerable<BlindCheckForm>> GetAllBlindCheckFormsAsync()
+    {
+        var allResources = _assembly.GetManifestResourceNames();
+        var jsonResources = allResources.Where(r => r.EndsWith(".json", StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var forms = new List<BlindCheckForm>();
+
+        foreach (var resourceName in jsonResources)
+        {
+            try
+            {
+                await using var stream = _assembly.GetManifestResourceStream(resourceName);
+                if (stream == null)
+                {
+                    logger.LogWarning($"Could not load embedded resource stream for '{resourceName}'");
+                    continue;
+                }
+
+                var form = await JsonSerializer.DeserializeAsync<BlindCheckForm>(stream, _jsonOptions);
+                if (form != null)
+                {
+                    forms.Add(form);
+                }
+                else
+                {
+                    logger.LogWarning($"Failed to deserialize BlindCheckForm from '{resourceName}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error loading embedded resource '{resourceName}'");
+            }
+        }
+
+        return forms;
     }
 }
