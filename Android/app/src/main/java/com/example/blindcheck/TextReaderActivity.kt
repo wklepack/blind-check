@@ -16,6 +16,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,14 +35,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlin.math.max
+import kotlin.math.min
 
 class TextReaderActivity : ComponentActivity() {
 
     private val hasCameraPermission = mutableStateOf(false)
-
-    // --- KEY CHANGE: State to hold the recognized text ---
-    // If this is not empty, we show the confirmation screen.
     private val recognizedTextState = mutableStateOf("")
+    private lateinit var cellName: String
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -57,6 +58,8 @@ class TextReaderActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        cellName = intent.getStringExtra("cellName") ?: ""
+
         hasCameraPermission.value = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.CAMERA
@@ -64,11 +67,10 @@ class TextReaderActivity : ComponentActivity() {
 
         setContent {
             if (hasCameraPermission.value) {
-                // --- KEY CHANGE: Decide which screen to show ---
                 val recognizedText = recognizedTextState.value
                 if (recognizedText.isEmpty()) {
-                    // If no text is captured yet, show the camera
                     CameraScreen(
+                        cellName = cellName,
                         onImageCaptured = { imageProxy ->
                             processImageWithMLKit(imageProxy)
                         },
@@ -78,30 +80,77 @@ class TextReaderActivity : ComponentActivity() {
                         }
                     )
                 } else {
-                    // If text has been captured, show the confirmation screen
+                    val isVerified = isTextSimilar(cellName, recognizedText)
                     ConfirmationScreen(
+                        cellName = cellName,
                         scannedText = recognizedText,
+                        isVerified = isVerified,
                         onSave = {
-                            // --- KEY CHANGE: On "Save", return the result and finish ---
                             val resultIntent = Intent().apply {
-                                putExtra("recognizedText", recognizedText)
+                                putExtra("isVerified", isVerified)
                             }
                             setResult(Activity.RESULT_OK, resultIntent)
                             finish()
                         },
                         onScanAgain = {
-                            // --- KEY CHANGE: On "Scan Again", clear the state to go back to camera ---
                             recognizedTextState.value = ""
                         }
                     )
                 }
             } else {
-                // Show permission request screen if permission is not granted
                 PermissionRequestScreen {
                     requestPermissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             }
         }
+    }
+
+    private fun isTextSimilar(expected: String, actual: String): Boolean {
+        val cleanExpected = expected.replace(Regex("[^A-Za-z0-9\\s]"), "").replace(Regex("\\s+"), " ").trim().lowercase()
+        val cleanActual = actual.replace(Regex("[^A-Za-z0-9\\s]"), "").replace(Regex("\\s+"), " ").trim().lowercase()
+
+        val distance = levenshtein(cleanExpected, cleanActual)
+        val similarity = 1.0 - (distance.toDouble() / max(cleanExpected.length, cleanActual.length))
+
+        return similarity >= 0.8 // 80% similarity threshold
+    }
+
+    private fun levenshtein(lhs: CharSequence, rhs: CharSequence): Int {
+        if (lhs == rhs) {
+            return 0
+        }
+        if (lhs.isEmpty()) {
+            return rhs.length
+        }
+        if (rhs.isEmpty()) {
+            return lhs.length
+        }
+
+        val lhsLength = lhs.length + 1
+        val rhsLength = rhs.length + 1
+
+        var cost = Array(lhsLength) { it }
+        var newCost = Array(lhsLength) { 0 }
+
+        for (i in 1 until rhsLength) {
+            newCost[0] = i
+
+            for (j in 1 until lhsLength) {
+                val match = if (lhs[j - 1] == rhs[i - 1]) 0 else 1
+
+                val costReplace = cost[j - 1] + match
+                val costInsert = cost[j] + 1
+                val costDelete = newCost[j - 1] + 1
+
+                newCost[j] = min(min(costInsert, costDelete), costReplace)
+            }
+
+            val swap = cost
+            cost = newCost
+            newCost = swap
+        }
+
+        return cost[lhsLength - 1]
     }
 
     @OptIn(ExperimentalGetImage::class)
@@ -113,7 +162,6 @@ class TextReaderActivity : ComponentActivity() {
 
             recognizer.process(image)
                 .addOnSuccessListener { visionText ->
-                    // --- KEY CHANGE: Update the state with the scanned text ---
                     recognizedTextState.value = visionText.text.ifBlank { "No text found." }
                 }
                 .addOnFailureListener { e ->
@@ -133,7 +181,6 @@ class TextReaderActivity : ComponentActivity() {
     }
 }
 
-// Composable for the permission request UI (unchanged)
 @Composable
 fun PermissionRequestScreen(onRequestPermission: () -> Unit) {
     LaunchedEffect(Unit) {
@@ -144,11 +191,11 @@ fun PermissionRequestScreen(onRequestPermission: () -> Unit) {
     }
 }
 
-// --- NEW ---
-// Composable for the confirmation screen
 @Composable
 fun ConfirmationScreen(
+    cellName: String,
     scannedText: String,
+    isVerified: Boolean,
     onSave: () -> Unit,
     onScanAgain: () -> Unit
 ) {
@@ -160,11 +207,13 @@ fun ConfirmationScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Scanned Text:",
+                text = "Scanning for: $cellName",
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 18.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -177,6 +226,18 @@ fun ConfirmationScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
+
+            val verificationStatus = if (isVerified) "Match" else "No Match"
+            val verificationColor = if (isVerified) Color.Green else Color.Red
+
+            Text(
+                text = "Verification: $verificationStatus",
+                color = verificationColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -192,15 +253,14 @@ fun ConfirmationScreen(
     }
 }
 
-
-// Composable function for the camera screen UI
 @Composable
 fun CameraScreen(
+    cellName: String,
     onImageCaptured: (ImageProxy) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
 
@@ -235,6 +295,17 @@ fun CameraScreen(
                 previewView
             },
             modifier = Modifier.fillMaxSize()
+        )
+
+        Text(
+            text = "Scanning for: $cellName",
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp)
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding(8.dp),
+            color = Color.White,
+            fontSize = 16.sp
         )
 
         Button(

@@ -50,9 +50,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             BlindCheckTheme {
                 val context = LocalContext.current
+                val initialCellTexts = listOf(
+                    "Michael Johnson", "Emily Davis", "Christopher Miller",
+                    "Jessica Anderson", "Daniel Thompson", "Ashley Martinez",
+                    "James Wilson", "Sarah Harris", "Andrew Clark"
+                )
+
                 var gridItems by remember {
                     mutableStateOf(
-                        List(9) { index -> GridItem(id = index, name = "") }
+                        List(9) { index -> GridItem(id = index, name = initialCellTexts[index]) }
                     )
                 }
                 var currentEditingItemId by remember { mutableStateOf<Int?>(null) }
@@ -68,12 +74,12 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(activityResult) {
                     val result = activityResult
                     if (result != null && result.resultCode == Activity.RESULT_OK) {
-                        val recognizedText = result.data?.getStringExtra("recognizedText") ?: ""
+                        val isVerified = result.data?.getBooleanExtra("isVerified", false) ?: false
                         val itemId = currentEditingItemId
-                        if (itemId != null && recognizedText.isNotBlank()) {
+                        if (itemId != null && isVerified) {
                             gridItems = gridItems.map {
                                 if (it.id == itemId) {
-                                    it.copy(name = recognizedText)
+                                    it.copy(isVerified = true)
                                 } else {
                                     it
                                 }
@@ -90,6 +96,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(innerPadding)
                             .padding(16.dp)
+                            .fillMaxSize()
                     ) {
                         Text(
                             text = "Name: User Name",
@@ -106,25 +113,32 @@ class MainActivity : ComponentActivity() {
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        GridScreen(
-                            items = gridItems,
-                            onItemClick = { clickedItem ->
-                                currentEditingItemId = clickedItem.id
-                                val intent = Intent(context, TextReaderActivity::class.java)
-                                textReaderLauncher.launch(intent)
-                            },
-                            onItemCheckedChange = { clickedItem, isChecked ->
-                                gridItems = gridItems.map { item ->
-                                    if (item.id == clickedItem.id) {
-                                        item.copy(isVerified = isChecked)
-                                    } else {
-                                        item
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            GridScreen(
+                                items = gridItems,
+                                onItemClick = { clickedItem ->
+                                    currentEditingItemId = clickedItem.id
+                                    val intent = Intent(context, TextReaderActivity::class.java).apply {
+                                        putExtra("cellName", clickedItem.name)
+                                    }
+                                    textReaderLauncher.launch(intent)
+                                },
+                                onItemCheckedChange = { clickedItem, isChecked ->
+                                    gridItems = gridItems.map { item ->
+                                        if (item.id == clickedItem.id) {
+                                            item.copy(isVerified = isChecked)
+                                        } else {
+                                            item
+                                        }
                                     }
                                 }
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.weight(1f))
+                            )
+                        }
 
                         Button(
                             onClick = { /* TODO: Handle button click */ },
