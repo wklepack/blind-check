@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AzureCosmosDisableNewtonsoftJsonCheck>true</AzureCosmosDisableNewtonsoftJsonCheck>
+    <UserSecretsId>4e9b3d2c-06dd-4c00-8c5d-4f1f71f461ce</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

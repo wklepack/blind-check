@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Program_1 = Program;
 
 Console.WriteLine("BlindCheck Data Seed Utility");
 Console.WriteLine("============================");
@@ -14,6 +15,7 @@ var host = Host.CreateDefaultBuilder(args)
         config.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets<Program_1>()
             .AddEnvironmentVariables();
     })
     .ConfigureServices((context, services) =>

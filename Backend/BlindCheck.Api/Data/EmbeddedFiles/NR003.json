@@ -22,7 +22,7 @@
   ],
   "BlindCheckVerification": {
     "IsVerified": true,
-    "VerifiedBy": true,
+    "VerifiedBy": "Michael Brown",
     "VerifiedAt": "2025-02-01T09:15:00Z"
   }
 }

@@ -8,6 +8,7 @@ builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
 // Add services to the container.
@@ -15,9 +16,6 @@ builder.Configuration
 builder.Services
     .AddSingleton<IStore, FileStore>()
     .AddOpenApi();
-
-
-
 
 var app = builder.Build();
 
