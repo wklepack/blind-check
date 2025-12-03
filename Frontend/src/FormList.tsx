@@ -23,7 +23,7 @@ function fuzzyMatch(query: string, target: string) {
 export default function FormList({ onView, list: data, error }: Props) {
     const [search, setSearch] = useState("");
     const filtered = (data ?? []).filter(
-        (item) => fuzzyMatch(search, item.contractNumber) //|| fuzzyMatch(search, item.decedentName ?? "")
+        (item) => fuzzyMatch(search, item.contractNumber) || fuzzyMatch(search, item.decedent.name)
     );
 
     return (
@@ -63,9 +63,7 @@ export default function FormList({ onView, list: data, error }: Props) {
                         <span className="w-32 font-medium">{item.contractNumber}</span>
 
                         {/* Decedent Name */}
-                        <span className="flex-1 truncate">
-                            {item.decedentName ? item.decedentName : ""}
-                        </span>
+                        <span className="flex-1 truncate">{item.decedent.name}</span>
 
                         {/* Status Badge */}
                         <span
