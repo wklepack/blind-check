@@ -55,7 +55,7 @@ export default function LoginForm({ onLogin, onLoginStart }: Props) {
             <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-2 rounded text-white font-semibold transition ${
+                className={`cursor-pointer w-full py-2 rounded text-white font-semibold transition ${
                     loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
                 style={{ backgroundColor: "rgb(71, 213, 205)" }}

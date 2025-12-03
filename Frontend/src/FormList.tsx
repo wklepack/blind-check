@@ -42,7 +42,7 @@ export default function FormList({ onView, list: data, error }: Props) {
             {/* Column Headers */}
             <div className="flex font-semibold text-gray-700 text-sm border-b pb-2 mb-2">
                 <span className="w-32">Contract Number</span>
-                <span className="flex-1">Decedent Name</span>
+                <span className="w-34">Decedent Name</span>
                 <span className="w-28 text-center">Status</span>
             </div>
 
@@ -60,7 +60,7 @@ export default function FormList({ onView, list: data, error }: Props) {
                         className="flex items-center gap-3 p-3 border-b last:border-none hover:bg-gray-50"
                     >
                         {/* Contract Number */}
-                        <span className="w-32 font-medium">{item.contractNumber}</span>
+                        <span className="w-24 font-medium">{item.contractNumber}</span>
 
                         {/* Decedent Name */}
                         <span className="flex-1 truncate">{item.decedent.name}</span>
@@ -80,7 +80,7 @@ export default function FormList({ onView, list: data, error }: Props) {
                         <button
                             type="button"
                             onClick={() => onView(item)}
-                            className="ml-2 text-gray-500 hover:text-gray-700 p-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            className="cursor-pointer ml-2 text-gray-500 hover:text-gray-700 p-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
                             title="View"
                         >
                             <svg

@@ -21,7 +21,7 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
                 <button
                     type="button"
                     onClick={onBack}
-                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    className="cursor-pointer flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
             <button
                 type="button"
                 onClick={() => window.print()}
-                className="w-full bg-teal-500 text-white font-semibold py-3 rounded hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="cursor-pointer w-full bg-teal-500 text-white font-semibold py-3 rounded hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
             >
                 Print Form
             </button>
