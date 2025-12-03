@@ -12,7 +12,7 @@
   ],
   "BlindCheckVerification": {
     "IsVerified": false,
-    "VerifiedBy": false,
+    "VerifiedBy": "",
     "VerifiedAt": "2025-02-15T16:20:00Z"
   }
 }

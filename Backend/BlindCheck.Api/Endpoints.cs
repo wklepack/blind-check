@@ -9,19 +9,19 @@ public static class Endpoints
     {
         app.MapGet("/api/blind-check-form", async (IStore store) =>
         {
-            var entities = await store.GetAllBlindCheckFormsAsync();
+            var entities = await store.GetAllBlindCheckFormsFromDbAsync();
             return Results.Ok(entities);
         })
         .WithName("GetAllBlindCheckForms");
 
-        app.MapGet("/api/blind-check-form/{caseId}", async (string caseId, IStore store) =>
+        app.MapGet("/api/blind-check-form/{contractNumber}", async (string contractNumber, IStore store) =>
         {
-            var entity = await store.GetBlindCheckFromFromDbAsync(caseId);
+            var entity = await store.GetBlindCheckFromFromDbAsync(contractNumber);
             if(entity == null)
             {
                 return Results.NotFound(new
                 {
-                    message = $"Blind check form with case ID '{caseId}' not found."
+                    message = $"Blind check form with case ID '{contractNumber}' not found."
                 });
             }
             return Results.Ok(entity);
@@ -30,7 +30,7 @@ public static class Endpoints
 
         app.MapPost("/api/blind-check-form/{contractNumber}/verify", async (string contractNumber, VerifyBlindCheckRequest request, IStore store) =>
         {
-            var entity = await store.GetBlindCheckFormByCaseIdAsync(contractNumber);
+            var entity = await store.GetBlindCheckFromFromDbAsync(contractNumber);
             if (entity == null)
             {
                 return Results.NotFound(new

@@ -4,10 +4,9 @@ namespace BlindCheck.Api.Data;
 
 public interface IStore
 {
-    public Task<BlindCheckForm?> GetBlindCheckFormByCaseIdAsync(string caseId);
+    public Task<IEnumerable<BlindCheckForm>> GetAllBlindCheckFormsFromDbAsync();
     public Task<BlindCheckForm?> GetBlindCheckFromFromDbAsync(string contractNumber);
     public Task<BlindCheckForm> SaveBlindCheckFormAsync(BlindCheckForm form);
     public Task<int> SeedDatabaseFromEmbeddedFilesAsync();
-    public Task<IEnumerable<BlindCheckForm>> GetAllBlindCheckFormsAsync();
     public Task<bool> UpdateBlindCheckVerificationAsync(string contractNumber, bool isVerified, string userName);
 }
