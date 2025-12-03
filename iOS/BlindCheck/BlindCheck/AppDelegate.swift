@@ -4,12 +4,14 @@
 //
 //  Created by Oleksii Ratiiev on 03.12.2025.
 //
+//  Note: This file is kept for reference but is no longer the main entry point.
+//  The app now uses BlindCheckApp.swift with SwiftUI App lifecycle.
+//
 
 import UIKit
 import SwiftUI
 
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate_Legacy: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
