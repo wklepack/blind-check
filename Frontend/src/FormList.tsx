@@ -27,7 +27,7 @@ export default function FormList({ onView, list: data, error }: Props) {
     );
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[600px]">
+        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem] mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Blind Check Forms</h2>
 
             {/* Search Field */}
@@ -47,7 +47,7 @@ export default function FormList({ onView, list: data, error }: Props) {
             </div>
 
             {/* Scrollable List */}
-            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded">
+            <div className="max-h-100 overflow-y-auto border border-gray-200 rounded">
                 {!data && !error && <div className="p-3 text-gray-500 text-center">Loading...</div>}
                 {error && <div className="p-3 text-red-600 text-center">{error}</div>}
                 {data && filtered.length === 0 && (

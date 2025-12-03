@@ -23,7 +23,7 @@ export default function LoginForm({ onLogin, onLoginStart }: Props) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-80">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-80 mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Login to you account</h2>
 
             <div className="mb-4">

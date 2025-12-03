@@ -15,7 +15,7 @@ export default function ViewForm({ selectedForm, onBack }: ViewFormProps) {
             : "Unknown";
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem]">
+        <div className="bg-white p-6 rounded-lg shadow-md w-[32rem] mx-auto">
             {/* Top bar */}
             <div className="flex items-center mb-6">
                 <button
